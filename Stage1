@@ -1,0 +1,14 @@
+snyk-win version
+snyk-win iac test main.tf > iac_report.txt
+snyk-win code test app.js > app_report.txt
+npm install && snyk-win test --file=package.json > dependency_report.txt
+
+
+
+----------------------------------
+snyk-win version
+snyk-win code test --file=Dockerfile > docker_report.txt
+snyk-win iac test main.tf > iac_report.txt
+snyk-win code test app.js > code_report.txt
+npm install
+snyk-win test --file=package.json > package_report.txt

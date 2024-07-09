@@ -1,0 +1,45 @@
+pipeline {
+    agent none
+    
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('5acd5eb3-e919-40bd-97fe-4d057700d975')
+    }
+
+    stages {
+        stage('Git') {
+            agent { 
+                label 'Kmaster'
+            }
+            steps {
+                sh 'git clone https://github.com/Intellipaat-Training/Shark-Secure-Pipeline.git'
+            }
+        }
+        
+        stage('Docker') {
+            agent { 
+                label 'Kmaster'
+            }
+            steps {
+                sh 'sudo apt install docker.io -y'
+                sh 'sudo docker build /home/ubuntu/jenkins/workspace/Deployment/Shark-Secure-Pipeline/. -t docker6767/sharkproduct'
+                sh 'sudo curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin'
+                sh 'sudo trivy image docker6767/sharkproduct --scanners vuln > image_report.txt' 
+                sh 'sudo echo $DOCKERHUB_CREDENTIALS_PSW | sudo docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                sh 'sudo docker push docker6767/sharkproduct'
+            }
+        }
+        
+        stage('K8s') {
+            agent { 
+                label 'Kmaster'
+            }
+            steps {
+                // Install kube-bench
+                sh 'sudo docker run --rm -v `pwd`:/host docker.io/aquasec/kube-bench:latest install'
+                sh 'sudo ./kube-bench > kubernetesbench.txt'
+                sh 'kubectl apply -f /home/ubuntu/jenkins/workspace/Deployment/Shark-Secure-Pipeline/deploy.yaml'
+                sh 'kubectl apply -f /home/ubuntu/jenkins/workspace/Deployment/Shark-Secure-Pipeline/svc.yaml'
+            }
+        }        
+    }
+}

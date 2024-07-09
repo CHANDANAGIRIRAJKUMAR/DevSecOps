@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Use Local File') {
+            steps {
+                // Copy the file from the local system to the workspace
+                bat 'copy "C:\\Users\\Dell\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\Test\\main.tf" .'
+            }
+        }
+        stage('Terraform Init') {
+            steps {
+                // Initialize Terraform configuration
+                bat '"C:\\Users\\Dell\\Downloads\\terraform_1.7.4_windows_386\\terraform.exe" init'
+            }
+        }
+
+        stage('Terraform Validate') {
+            steps {
+                // Validate Terraform configuration
+                bat '"C:\\Users\\Dell\\Downloads\\terraform_1.7.4_windows_386\\terraform.exe" validate'
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                // Plan Terraform changes
+                bat '"C:\\Users\\Dell\\Downloads\\terraform_1.7.4_windows_386\\terraform.exe" plan -out=tfplan'
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                // Apply Terraform changes
+                bat '"C:\\Users\\Dell\\Downloads\\terraform_1.7.4_windows_386\\terraform.exe" apply -auto-approve tfplan'
+            }
+        }
+    }
+}
