@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: shark
-        image: docker6767/sharkproduct
+        image: chandanagirirajkumar/sharkproduct
         ports:
         - containerPort: 8080
