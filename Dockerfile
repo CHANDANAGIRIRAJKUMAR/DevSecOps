@@ -1,5 +1,5 @@
 FROM node:14
-WORKDIR /home/ubuntu/Jenkins/workspace/Deployment/Shark-Secure-Pipeline/
+WORKDIR /home/ubuntu/Jenkins/workspace/third_job/DevSecOps/
 COPY package*.json ./
 RUN npm install
 COPY . .
